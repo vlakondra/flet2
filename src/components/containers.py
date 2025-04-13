@@ -12,6 +12,7 @@ container1 = ft.Container(
     width=200,
     height=200,
     expand=False,
+    alignment= ft.alignment.top_center,
     content=ft.ElevatedButton("Кнопка", on_click=onclick),
 )
 
