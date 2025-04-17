@@ -1,6 +1,10 @@
 import flet as ft
 from flet import Colors
 
+from db.dbwork import dbWork
+db = dbWork('users.db')
+
+
 def pageSettings(page):
     '''Настройка главной страницы'''
     page.title = "Пример"
