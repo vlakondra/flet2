@@ -1,29 +1,33 @@
 import flet as ft
-from importlib import reload
 
 from db.dbwork import dbWork
-from components.table import cnt, dt, txt, ff
+from components.table import  txt, func,getDataTable
 import components as comp
 
-
+var =10
 def show1(e):
+    global var
     if e.data == "1":
         pagelet.content = t1
     elif e.data == "0":
-        pagelet.content = cnt
+        var=var+1
+        print('show1??',var, e.data)
+        pagelet.content = getDataTable()
 
-name = ft.TextField()
-lastName = ft.TextField()
-fam = ft.TextField()
+    pagelet.update()    
+
+
+name = ft.Ref[ft.TextField]()
+lastName = ft.Ref[ft.TextField]()
+fam = ft.Ref[ft.TextField]()
+
 
 def addData(e):
     print(name.current.value)
     comp.db.add_user(name.current.value, lastName.current.value, fam.current.value)
 
     e.page.update()
-    # pagelet.content = cnt
-    # cnt.update()
-    ff()
+
 
 
 t1 = ft.Tabs(
@@ -36,7 +40,9 @@ t1 = ft.Tabs(
             content=ft.Column(
                 spacing=10,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.START,
                 controls=[
+                    ft.Text(""),
                     ft.TextField(
                         ref=name, label="Имя", multiline=True, max_lines=3, width=150
                     ),
@@ -48,12 +54,12 @@ t1 = ft.Tabs(
         ),
         ft.Tab(
             tab_content=ft.Icon(ft.Icons.SEARCH),
-            content=ft.Text("This is Tab 2"),
+            content=ft.Text("Закладка Tab 2"),
         ),
         ft.Tab(
             text="Tab 3",
             icon=ft.Icons.SETTINGS,
-            content=ft.Text("This is Tab 3"),
+            content=ft.Text("Закладка Tab 3"),
         ),
     ],
     expand=1,
