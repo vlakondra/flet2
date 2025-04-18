@@ -15,4 +15,4 @@ def pageSettings(page):
     page.window.prevent_close = True
     page.window.center()
 
-fam = ft.TextField(label="Фамилия")    
+fam = ft.Ref[ft.TextField]()    
