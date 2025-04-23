@@ -1,4 +1,5 @@
 import flet as ft
+from flet.core.column import ScrollableControl
 import components as comp
 
 users = comp.db.get_users()
