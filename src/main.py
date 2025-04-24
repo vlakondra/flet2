@@ -17,6 +17,7 @@ def switch_container(e):
     e.page.controls[0] = containers[current_index]  # Обновляем отображаемый контейнер
     e.page.update()  # Обновляем страницу
 
+# https://thecatapi.com/
 
 def main(page: ft.Page):
     comp.pageSettings(page)
