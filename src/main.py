@@ -33,7 +33,7 @@ def main(page: ft.Page):
         img = ft.Image(
             src=f"https://cdn2.thecatapi.com/images/{breed['reference_image_id']}.jpg",
             width=200,
-            height=100,
+            # height=100,
             fit=ft.ImageFit.CONTAIN,
             error_content=ft.Text("", width=100),
             
