@@ -7,7 +7,7 @@ def show_dialog(e,br_id, br_name):
     br_id - id породы, br_name - название'''
 
     #Загрузка изображений для породы
-    res = getCatsByBreed(br_id)
+    res =  getCatsByBreed(br_id)
     # print(res)
     #строка для размещения и прокрутка 5 фото
     images_row = ft.Row(expand=1,width=500, wrap=False, scroll=ft.ScrollMode.ALWAYS)
