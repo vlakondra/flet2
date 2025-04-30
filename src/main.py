@@ -1,4 +1,5 @@
 import flet as ft
+from flet.core.box import List
 import components as comp
 from components.containers import containers, current_index
 
@@ -14,9 +15,16 @@ from components.pagelet import pagelet
 def ff():
     brs = getBreeds()
     print(brs)
+    return brs
+
+def onerr(e):
+    print('onerr',e)
+
+# import logging
+# logging.basicConfig(level=logging.DEBUG)
 
 
-async def main(page: ft.Page):
+def main(page: ft.Page):
     comp.pageSettings(page)
     # получим массив пород
     # page.run_thread(ff)
@@ -25,8 +33,9 @@ async def main(page: ft.Page):
     # создадим список для отображения пород
     lv = ft.ListView(expand=False, spacing=10, width=202, height=400, horizontal=False)
 
-    breeds = await getBreeds()
-
+    # breeds = await getBreeds()
+    breeds = getBreeds() #Данные по породам
+  
     # Создадим форму отображения данных:
     # Контейнер-колонка-изображение-подпись
     for breed in breeds:
@@ -37,6 +46,8 @@ async def main(page: ft.Page):
             fit=ft.ImageFit.CONTAIN,
             error_content=ft.Text("", width=100),
         )
+
+        # print(img.src)
 
         nm = ft.TextButton(
             breed["name"],
@@ -56,8 +67,10 @@ async def main(page: ft.Page):
             padding=10,
             border=ft.border.all(1, ft.Colors.PINK_600),
         )
-
+        
         lv.controls.append(cnt)
+
+    page.on_error=onerr    
 
     page.add(lv)
 
