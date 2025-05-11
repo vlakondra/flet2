@@ -1,78 +1,100 @@
 import flet as ft
-from flet.core.box import List
+
 import components as comp
-from components.containers import containers, current_index
-
-from components.catsDialog import show_dialog
-from restapi.cats import getBreeds
-
-from components.pagelet import pagelet
 
 
-# https://thecatapi.com/
+# comp.odb.connect()
+
+# comp.odb.create_tables([comp.Person])
+# print(comp.odb, comp.Person)
 
 
-def ff():
-    brs = getBreeds()
-    print(brs)
-    return brs
+def getTableNames():
+    arr = [
+        ft.NavigationDrawerDestination(
+            label=m,
+            data=m,
+        )
+        for m in comp.models
+        if m != "sqlite_sequence" and m != "sqlite_stat1" and m != "person"
+    ]
+    return arr
 
-def onerr(e):
-    print('onerr',e)
 
-# import logging
-# logging.basicConfig(level=logging.DEBUG)
+getTableNames()
+
+
+def onChangeDrawer1(e):
+    print(e)  ##Поставить фильтр!!
+    print(list(comp.models.keys())[int(e.data)])
 
 
 def main(page: ft.Page):
-    comp.pageSettings(page)
-    # получим массив пород
-    # page.run_thread(ff)
-    page.auto_scroll = True
-
-    # создадим список для отображения пород
-    lv = ft.ListView(expand=False, spacing=10, width=202, height=400, horizontal=False)
-
-    # breeds = await getBreeds()
-    breeds = getBreeds() #Данные по породам
-  
-    # Создадим форму отображения данных:
-    # Контейнер-колонка-изображение-подпись
-    for breed in breeds:
-        img = ft.Image(
-            src=f"https://cdn2.thecatapi.com/images/{breed['reference_image_id']}.jpg",
-            width=200,
-            # height=100,
-            fit=ft.ImageFit.CONTAIN,
-            error_content=ft.Text("", width=100),
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+ 
+    #Обработчик клика по имени таблицы
+    def onChangeDrawer(e):
+        #Получим имя таблицы по индексу пукта дравера
+        table = list(comp.models.keys())[int(e.data)]
+        #Безуспешная попытка закрыть дравер
+        pagelet.close_drawer()
+        pagelet.close_end_drawer()
+        pagelet.update()
+        page.update()
+        #Получим данные выбранной таблицы
+        query = (comp.models[table]
+                  .select()
+                  .limit(10)
+                  .dicts()
+                )
+        #Построим заголовки таблицы на основе метаданных
+        header = [
+            ft.DataColumn(ft.Text(col, weight=ft.FontWeight.W_600))
+            for col in comp.models[table]._meta.columns
+        ]
+        #Построим строки таблицы на основе запроса
+        rows = []
+        for row in query:
+            cells = [ft.DataCell(ft.Text(str(cell),overflow=ft.TextOverflow.FADE)) for cell in row.values()]
+            rows.append(ft.DataRow(cells))
+        #Создадим объект Table
+        table = ft.DataTable(
+            columns=header,
+            rows=rows,
+            column_spacing=5,
+            heading_row_color=ft.colors.BLUE_GREY_100,
+            border=ft.border.all(1, ft.colors.BLUE_GREY_200),expand=True
         )
-
-        # print(img.src)
-
-        nm = ft.TextButton(
-            breed["name"],
-            on_click=lambda e, b_id=breed["id"], b_name=breed["name"]: show_dialog(
-                e, b_id, b_name
-            ),
-            width=195,
-        )
-
-        col = ft.Column(
-            spacing=0, alignment=ft.MainAxisAlignment.START, controls=[img, nm]
-        )
-
-        cnt = ft.Container(
-            content=col,
-            expand=False,
-            padding=10,
-            border=ft.border.all(1, ft.Colors.PINK_600),
-        )
-        
-        lv.controls.append(cnt)
-
-    page.on_error=onerr    
-
-    page.add(lv)
+        # и поместим его в контейнер для центрирования
+        cont = ft.Container(
+                    content=table,
+                    margin=10,
+                    padding=10,
+                    alignment=ft.alignment.center,
+                    
+         )
+        #Добавим контейнер к странице
+        pagelet.content = cont
+        pagelet.update()
+    #Создадим объект Drawer
+    ed = ft.NavigationDrawer(
+        position=ft.NavigationDrawerPosition.END,
+        on_change=onChangeDrawer,
+        controls=getTableNames(),
+    )
+    #Создадим объект Pagelet
+    pagelet = ft.Pagelet(
+        appbar=ft.AppBar(
+            title=ft.Text("База данных Chinook"), bgcolor=ft.Colors.AMBER_ACCENT
+        ),
+        content=ft.Container(ft.Text("")),
+        bgcolor=ft.Colors.AMBER_100,
+        expand=True,
+        drawer=ed,
+        height=800,
+    )
+    #Добавим Pagelet к странице
+    page.add(pagelet)
 
 
 ft.app(main)

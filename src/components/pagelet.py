@@ -17,6 +17,7 @@ def show1(e):
     pagelet.update()    
 
 
+
 name = ft.Ref[ft.TextField]()
 lastName = ft.Ref[ft.TextField]()
 fam = ft.Ref[ft.TextField]()

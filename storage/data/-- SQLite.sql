@@ -1,3 +1,3 @@
 -- SQLite
-delete from users where id > 1;
-select * from users;
+--delete from users;
+select * from artists;
