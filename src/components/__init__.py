@@ -1,14 +1,16 @@
 import flet as ft
 from flet import Colors
 
-from peewee import *;
+from peewee import *
 from playhouse.reflection import Introspector
 
 odb = SqliteDatabase('storage/data/chinook.db')
 introspector = Introspector.from_database(odb)
 models = introspector.generate_models()
 
-print('odb',models,odb)
+# from pagination import Pagination
+
+# print('odb',models,odb)
 
 
 

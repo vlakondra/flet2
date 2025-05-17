@@ -1,100 +1,60 @@
 import flet as ft
 
-import components as comp
-
-
-# comp.odb.connect()
-
-# comp.odb.create_tables([comp.Person])
-# print(comp.odb, comp.Person)
-
-
-def getTableNames():
-    arr = [
-        ft.NavigationDrawerDestination(
-            label=m,
-            data=m,
-        )
-        for m in comp.models
-        if m != "sqlite_sequence" and m != "sqlite_stat1" and m != "person"
-    ]
-    return arr
-
-
-getTableNames()
-
-
-def onChangeDrawer1(e):
-    print(e)  ##Поставить фильтр!!
-    print(list(comp.models.keys())[int(e.data)])
-
-
 def main(page: ft.Page):
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
- 
-    #Обработчик клика по имени таблицы
-    def onChangeDrawer(e):
-        #Получим имя таблицы по индексу пукта дравера
-        table = list(comp.models.keys())[int(e.data)]
-        #Безуспешная попытка закрыть дравер
-        pagelet.close_drawer()
-        pagelet.close_end_drawer()
-        pagelet.update()
-        page.update()
-        #Получим данные выбранной таблицы
-        query = (comp.models[table]
-                  .select()
-                  .limit(10)
-                  .dicts()
-                )
-        #Построим заголовки таблицы на основе метаданных
-        header = [
-            ft.DataColumn(ft.Text(col, weight=ft.FontWeight.W_600))
-            for col in comp.models[table]._meta.columns
-        ]
-        #Построим строки таблицы на основе запроса
-        rows = []
-        for row in query:
-            cells = [ft.DataCell(ft.Text(str(cell),overflow=ft.TextOverflow.FADE)) for cell in row.values()]
-            rows.append(ft.DataRow(cells))
-        #Создадим объект Table
-        table = ft.DataTable(
-            columns=header,
-            rows=rows,
-            column_spacing=5,
-            heading_row_color=ft.colors.BLUE_GREY_100,
-            border=ft.border.all(1, ft.colors.BLUE_GREY_200),expand=True
+    # Настройка страницы
+    page.title = "Обновляемая таблица"
+    page.vertical_alignment = "center"
+    page.horizontal_alignment = "center"
+    page.padding = 20
+
+    # Создаем DataTable с колонками
+    table = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text("ID")),
+            ft.DataColumn(ft.Text("Название")),
+            ft.DataColumn(ft.Text("Значение")),
+        ],
+    )
+
+    # Счетчик для генерации новых строк
+    counter = 1
+
+    def add_row(e):
+        nonlocal counter
+        # Добавляем новую строку
+        table.rows.append(
+            ft.DataRow(
+                cells=[
+                    ft.DataCell(ft.Text(str(counter))),
+                    ft.DataCell(ft.Text(f"Элемент {counter}")),
+                    ft.DataCell(ft.Text(f"Значение {counter}")),
+                ]
+            )
         )
-        # и поместим его в контейнер для центрирования
-        cont = ft.Container(
-                    content=table,
-                    margin=10,
+        counter += 1
+        page.update()
+
+    # Создаем кнопку добавления
+    add_button = ft.ElevatedButton(
+        "Добавить строку",
+        icon=ft.icons.ADD,
+        on_click=add_row
+    )
+
+    # Добавляем элементы на страницу
+    page.add(
+        ft.Column(
+            [
+                add_button,
+                ft.Container(
+                    table,
+                    border=ft.border.all(1, ft.colors.OUTLINE),
                     padding=10,
-                    alignment=ft.alignment.center,
-                    
-         )
-        #Добавим контейнер к странице
-        pagelet.content = cont
-        pagelet.update()
-    #Создадим объект Drawer
-    ed = ft.NavigationDrawer(
-        position=ft.NavigationDrawerPosition.END,
-        on_change=onChangeDrawer,
-        controls=getTableNames(),
+                    border_radius=5,
+                )
+            ],
+            spacing=20
+        )
     )
-    #Создадим объект Pagelet
-    pagelet = ft.Pagelet(
-        appbar=ft.AppBar(
-            title=ft.Text("База данных Chinook"), bgcolor=ft.Colors.AMBER_ACCENT
-        ),
-        content=ft.Container(ft.Text("")),
-        bgcolor=ft.Colors.AMBER_100,
-        expand=True,
-        drawer=ed,
-        height=800,
-    )
-    #Добавим Pagelet к странице
-    page.add(pagelet)
 
-
-ft.app(main)
+ft.app(target=main)
