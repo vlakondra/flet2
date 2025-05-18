@@ -1,10 +1,11 @@
 import flet as ft
 
+
 def main(page: ft.Page):
     # Настройка страницы
     page.title = "Обновляемая таблица"
-    page.vertical_alignment = "center"
-    page.horizontal_alignment = "center"
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.padding = 20
 
     # Создаем DataTable с колонками
@@ -36,25 +37,40 @@ def main(page: ft.Page):
 
     # Создаем кнопку добавления
     add_button = ft.ElevatedButton(
-        "Добавить строку",
-        icon=ft.icons.ADD,
-        on_click=add_row
+        "Добавить строку", icon=ft.icons.ADD, on_click=add_row
     )
+
+    select_file = ft.ElevatedButton(
+        "Выбрать файл БД",
+        icon=ft.icons.FILE_OPEN,
+        on_click=lambda _: file_picker.pick_files(),
+    )
+
+    def on_dialog_result(e: ft.FilePickerResultEvent):
+        print("Selected files:", e.files)
+        print("Selected file or directory:", e.path)
+
+    file_picker = ft.FilePicker(on_result=on_dialog_result)
+    page.overlay.append(file_picker)
+    page.update()
 
     # Добавляем элементы на страницу
     page.add(
         ft.Column(
             [
+                select_file,
                 add_button,
                 ft.Container(
                     table,
                     border=ft.border.all(1, ft.colors.OUTLINE),
                     padding=10,
                     border_radius=5,
-                )
+                ),
             ],
-            spacing=20
+            spacing=20,
         )
     )
+    page.update()
+
 
 ft.app(target=main)

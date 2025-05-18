@@ -1,5 +1,4 @@
-from tkinter import W
-from turtle import bgcolor
+
 import flet as ft
 
 import components as comp
