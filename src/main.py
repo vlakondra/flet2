@@ -3,7 +3,7 @@ import flet as ft
 arr = [1,2,3]
 def main(page:ft.Page):
     def changeTxt(e,v):
-        print(e)
+        print(e.control.parent.controls)
         txt.value=v
         page.update()
 
