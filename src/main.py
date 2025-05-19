@@ -1,6 +1,5 @@
 import flet as ft
 
-
 def main(page: ft.Page):
     # Настройка страницы
     page.title = "Обновляемая таблица"
@@ -21,7 +20,7 @@ def main(page: ft.Page):
     counter = 1
 
     def add_row(e):
-        nonlocal counter
+        ###???
         # Добавляем новую строку
         table.rows.append(
             ft.DataRow(
@@ -43,21 +42,32 @@ def main(page: ft.Page):
     select_file = ft.ElevatedButton(
         "Выбрать файл БД",
         icon=ft.icons.FILE_OPEN,
-        on_click=lambda _: file_picker.pick_files(),
+        on_click=lambda _: file_picker.pick_files(allow_multiple=False),
     )
 
     def on_dialog_result(e: ft.FilePickerResultEvent):
         print("Selected files:", e.files)
         print("Selected file or directory:", e.path)
 
+        var.value=str(var.value)+'1'
+        print(var.value)
+        page.update()
+
+    #Добавляем диалог выбора файла
+    #https://flet.dev/docs/controls/filepicker
     file_picker = ft.FilePicker(on_result=on_dialog_result)
     page.overlay.append(file_picker)
+
+    var =ft.Text(str(1))
+    page.overlay.append(var)
+
     page.update()
 
     # Добавляем элементы на страницу
     page.add(
         ft.Column(
             [
+                var,
                 select_file,
                 add_button,
                 ft.Container(
