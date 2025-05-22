@@ -1,4 +1,3 @@
-
 import flet as ft
 
 import components as comp
@@ -9,8 +8,6 @@ def ff(e):
     print('func ff',e)
 
 # paging = pagination.Pagination(100,10,ff)
-
-
 # comp.odb.connect()
 
 
@@ -26,7 +23,7 @@ def getTableNames():
     return arr
 
 
-getTableNames()
+# getTableNames()
 
 
 def onChangeDrawer1(e):
@@ -38,8 +35,6 @@ def main(page: ft.Page):
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.scroll = ft.ScrollMode.ADAPTIVE
 
-    # pg = paging.build()
-    # print(pg)
  
     #Обработчик клика по имени таблицы
     def onChangeDrawer(e):
@@ -50,6 +45,7 @@ def main(page: ft.Page):
         pagelet.close_end_drawer()
         pagelet.update()
         page.update()
+        
         #Получим данные выбранной таблицы
         query = (comp.models[table]
                   .select()
@@ -57,6 +53,9 @@ def main(page: ft.Page):
                   #.limit(10)
                   .dicts()
                 )
+        
+        print('CNT', comp.models[table].select().count() )
+
         #Построим заголовки таблицы на основе метаданных
         header = [
             ft.DataColumn(ft.Text(col,
@@ -85,19 +84,24 @@ def main(page: ft.Page):
         # pg.width=350
         # bgcolor=ft.Colors.BLUE_500,
         
-        cont = ft.Container(
-                    content=ft.Column(spacing=0,
-                                      
-                                      expand=False,  controls=[table,
-                                                            pg]),# pg,#table,
-                    margin=10,
-                    # padding=10,
-                    bgcolor=ft.Colors.BLUE_300,
-                    alignment=ft.alignment.center,
-                    expand=False,
-                    border=ft.border.all(3, ft.Colors.RED_400),
-                )
+        # cont = ft.Container(
+        #             content=ft.Column(spacing=0,
+        #                             expand=False, 
+        #                             controls=[table,
+        #                                     pg]),
+        #             margin=10,
+        #             # padding=10,
+        #             bgcolor=ft.Colors.BLUE_300,
+        #             alignment=ft.alignment.center,
+        #             expand=False,
+        #             border=ft.border.all(3, ft.Colors.RED_400),
+        #         )
         
+        cont = ft.Column(spacing=0,
+                        expand=False, 
+                        controls=[table,
+                                    pg]) 
+
         # stc = ft.Stack( [ft.Container(table),ft.Container(pg)],fit=ft.StackFit.LOOSE)
         #Добавим контейнер к странице
         pagelet.content = cont
@@ -119,7 +123,8 @@ def main(page: ft.Page):
         bgcolor=ft.Colors.AMBER_100,
         expand=True,
         drawer=ed,
-        height=800,
+        height=1800,
+        
     )
     #Добавим Pagelet к странице
     page.add(pagelet)

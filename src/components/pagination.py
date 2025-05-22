@@ -13,11 +13,12 @@ class Pagination(ft.Row):
         self.width=200
 
     def build(self):
+        print('build')
         self.prev_button = ft.IconButton(
             icon=ft.icons.ARROW_BACK,
             disabled=self.current_page == 1,
             on_click=self.go_prev,
-            tooltip="Previous page"
+            tooltip="Предыдущая страница"
         )
         self.next_button = ft.IconButton(
             icon=ft.icons.ARROW_FORWARD,
